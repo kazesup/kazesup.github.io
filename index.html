@@ -53,6 +53,7 @@
             padding: 30px;
             max-width: 500px;
             width: 100%;
+            position: relative;
         }
 
         .bio-terminal::before {
@@ -69,6 +70,7 @@
                 transparent 2px
             );
             pointer-events: none;
+            border-radius: 10px;
         }
 
         .terminal-header {
@@ -99,7 +101,8 @@
             margin-bottom: 30px;
         }
 
-        .avatar {
+        .avatar,
+        .avatar-fallback {
             width: 120px;
             height: 120px;
             border-radius: 12px;
@@ -111,6 +114,11 @@
             filter: contrast(1.1) saturate(1.2) hue-rotate(10deg);
             margin-bottom: 15px;
             object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            background: linear-gradient(135deg, #306230, #1a5c1a);
         }
 
         .avatar:hover,
@@ -327,11 +335,19 @@
             object-fit: cover;
             flex-shrink: 0;
             filter: contrast(1.1) saturate(1.2);
-            background: #ffeb3b;
+            background: linear-gradient(135deg, #ff6b35, #8b4513);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            overflow: hidden;
+        }
+
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
         }
 
         .track-details {
@@ -433,6 +449,8 @@
             height: 12px;
             fill: #1DB954;
         }
+
+        @media (max-width: 600px) {
             .bio-terminal {
                 padding: 25px 20px;
                 margin: 10px;
@@ -442,7 +460,8 @@
                 font-size: 2.2rem;
             }
             
-            .avatar {
+            .avatar,
+            .avatar-fallback {
                 width: 100px;
                 height: 100px;
             }
@@ -450,6 +469,21 @@
             .music-grid {
                 grid-template-columns: 1fr;
             }
+
+            .now-playing {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-bottom: 20px;
+                max-width: 100%;
+            }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(-10px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(calc(100vh + 10px)); opacity: 0; }
         }
     </style>
 </head>
@@ -462,7 +496,7 @@
             NOW PLAYING
         </div>
         <div class="now-playing-content">
-            <div class="album-cover" id="albumCover">😸</div>
+            <div class="album-cover" id="albumCover">🎵</div>
             <div class="track-details">
                 <div class="track-info">
                     <div class="track-title">i dont think we'll ever find him</div>
@@ -495,7 +529,7 @@
                 <div class="name glitch-text" data-text="KAZE">KAZE</div>
                 <div class="pronouns">he/him</div>
             </div>
-            
+
             <div class="info-block">
                 <div class="info-title">🎵 AUDIO_FEED</div>
                 <div class="music-grid">
@@ -539,110 +573,6 @@
             }
         }
 
-        // Add floating animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes float {
-                0% { transform: translateY(-10px); opacity: 0; }
-                10% { opacity: 1; }
-                90% { opacity: 1; }
-                100% { transform: translateY(calc(100vh + 10px)); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Create album cover with yellow cat
-        function createAlbumCover() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 120;
-            canvas.height = 120;
-            const ctx = canvas.getContext('2d');
-            
-            // Orange/brown gradient background
-            const gradient = ctx.createLinearGradient(0, 0, 120, 120);
-            gradient.addColorStop(0, '#ff6b35');
-            gradient.addColorStop(1, '#8b4513');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 120, 120);
-            
-            // Black section (top left)
-            ctx.fillStyle = '#1a1a1a';
-            ctx.fillRect(0, 0, 60, 60);
-            
-            // Yellow cat body
-            ctx.fillStyle = '#ffeb3b';
-            ctx.beginPath();
-            ctx.arc(30, 40, 20, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Cat ears
-            ctx.beginPath();
-            ctx.moveTo(15, 25);
-            ctx.lineTo(20, 15);
-            ctx.lineTo(25, 25);
-            ctx.closePath();
-            ctx.fill();
-            
-            ctx.beginPath();
-            ctx.moveTo(35, 25);
-            ctx.lineTo(40, 15);
-            ctx.lineTo(45, 25);
-            ctx.closePath();
-            ctx.fill();
-            
-            // Pink ear insides
-            ctx.fillStyle = '#ff69b4';
-            ctx.beginPath();
-            ctx.arc(20, 20, 3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(40, 20, 3, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Cat eyes (white)
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.arc(25, 35, 5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(35, 35, 5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Cat pupils
-            ctx.fillStyle = '#000000';
-            ctx.beginPath();
-            ctx.arc(25, 35, 2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(35, 35, 2, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Cat mouth
-            ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(30, 42, 3, 0, Math.PI);
-            ctx.stroke();
-            
-            // Yellow lightning bolt
-            ctx.fillStyle = '#ffeb3b';
-            ctx.beginPath();
-            ctx.moveTo(45, 15);
-            ctx.lineTo(50, 25);
-            ctx.lineTo(47, 25);
-            ctx.lineTo(52, 40);
-            ctx.lineTo(47, 30);
-            ctx.lineTo(50, 30);
-            ctx.lineTo(45, 15);
-            ctx.closePath();
-            ctx.fill();
-            
-            return canvas.toDataURL();
-        }
-
-        // Set the album cover
-        document.getElementById('albumCover').src = createAlbumCover();
-
         // Load profile picture with fallback
         function loadAvatar() {
             const avatarContainer = document.getElementById('avatarContainer');
@@ -656,7 +586,6 @@
             };
             
             img.onerror = function() {
-                // Keep fallback emoji if image fails to load
                 console.log('Avatar failed to load, using fallback');
             };
             
@@ -671,17 +600,11 @@
             img.onload = function() {
                 albumContainer.innerHTML = '';
                 albumContainer.appendChild(img);
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.objectFit = 'cover';
-                img.style.borderRadius = '4px';
             };
             
             img.onerror = function() {
-                // Keep fallback cat emoji if image fails to load
                 console.log('Album cover failed to load, using fallback');
-                albumContainer.style.background = 'linear-gradient(135deg, #ff6b35, #8b4513)';
-                albumContainer.innerHTML = '😸';
+                albumContainer.innerHTML = '🎵';
             };
             
             img.src = 'https://i.imgur.com/r3ISArK.png';
@@ -689,14 +612,13 @@
 
         loadAlbumCover();
         loadAvatar();
-
         createMatrix();
 
         // Interactive elements
         document.querySelectorAll('.music-tag').forEach(tag => {
             tag.addEventListener('click', () => {
                 tag.style.animation = 'none';
-                tag.offsetHeight; // Trigger reflow
+                tag.offsetHeight;
                 tag.style.animation = 'glitch 0.5s';
             });
         });
@@ -716,6 +638,14 @@
                 }, 100);
             }
         }, 2000);
+
+        // Add some error handling and retry logic
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+                console.log('Image failed to load:', e.target.src);
+                // Could implement additional retry logic here
+            }
+        });
     </script>
 </body>
 </html>
