@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kaze.dmg</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f380f 0%, #1a5c1a 50%, #2d8f2d 100%);
+            color: #9bbc0f;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            z-index: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #9bbc0f;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .bio-terminal {
+            background: rgba(15, 56, 15, 0.95);
+            border: 2px solid #9bbc0f;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 
+                0 0 30px rgba(155, 188, 15, 0.3),
+                inset 0 0 20px rgba(155, 188, 15, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bio-terminal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                rgba(155, 188, 15, 0.03) 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #306230;
+        }
+
+        .terminal-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #c7d53f;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .terminal-status {
+            font-size: 0.8rem;
+            color: #9bbc0f;
+            opacity: 0.7;
+        }
+
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            border: 3px solid #9bbc0f;
+            box-shadow: 
+                0 0 20px rgba(155, 188, 15, 0.4),
+                inset 0 0 10px rgba(48, 98, 48, 0.3);
+            transition: all 0.3s ease;
+            filter: contrast(1.1) saturate(1.2) hue-rotate(10deg);
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        .avatar-fallback {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            border: 3px solid #9bbc0f;
+            box-shadow: 
+                0 0 20px rgba(155, 188, 15, 0.4),
+                inset 0 0 10px rgba(48, 98, 48, 0.3);
+            background: linear-gradient(135deg, #306230, #1a5c1a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .avatar:hover,
+        .avatar-fallback:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 
+                0 0 30px rgba(155, 188, 15, 0.6),
+                inset 0 0 15px rgba(48, 98, 48, 0.4);
+        }
+
+        .name {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 
+                0 0 10px #9bbc0f,
+                2px 2px 0px #306230;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .pronouns {
+            font-size: 1rem;
+            color: #c7d53f;
+            margin-bottom: 25px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .info-block {
+            background: rgba(48, 98, 48, 0.3);
+            border: 1px solid #306230;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #9bbc0f, transparent);
+            animation: scan 3s infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .info-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #c7d53f;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .discord-logo {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .music-tag {
+            background: linear-gradient(135deg, #306230, #1a5c1a);
+            color: #9bbc0f;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #9bbc0f;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .music-tag:hover {
+            background: linear-gradient(135deg, #9bbc0f, #c7d53f);
+            color: #0f380f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(155, 188, 15, 0.4);
+        }
+
+        .discord-block {
+            background: linear-gradient(135deg, #9bbc0f, #c7d53f);
+            color: #0f380f;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .discord-block:hover {
+            background: linear-gradient(135deg, #c7d53f, #9bbc0f);
+            border-color: #9bbc0f;
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(155, 188, 15, 0.3);
+        }
+
+        .furry-badge {
+            background: rgba(199, 213, 63, 0.2);
+            color: #c7d53f;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            border: 2px solid #c7d53f;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 5px rgba(199, 213, 63, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 20px rgba(199, 213, 63, 0.6);
+            }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background: #9bbc0f;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch-text:hover::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 2px;
+            color: #c7d53f;
+            z-index: -1;
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .now-playing {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(15, 56, 15, 0.95);
+            border: 2px solid #9bbc0f;
+            border-radius: 10px;
+            padding: 12px;
+            max-width: 320px;
+            box-shadow: 
+                0 0 20px rgba(155, 188, 15, 0.3),
+                inset 0 0 10px rgba(155, 188, 15, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .now-playing-content {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .album-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            border: 2px solid #9bbc0f;
+            object-fit: cover;
+            flex-shrink: 0;
+            filter: contrast(1.1) saturate(1.2);
+            background: #ffeb3b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .track-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .now-playing-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #c7d53f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .music-icon {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .track-info {
+            margin-bottom: 8px;
+        }
+
+        .track-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #9bbc0f;
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+
+        .track-artist {
+            font-size: 0.75rem;
+            color: #c7d53f;
+            opacity: 0.8;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(48, 98, 48, 0.5);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #9bbc0f, #c7d53f);
+            border-radius: 2px;
+            animation: progress 30s linear infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        .spotify-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.65rem;
+            color: #9bbc0f;
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .spotify-link:hover {
+            opacity: 1;
+        }
+
+        .spotify-logo {
+            width: 12px;
+            height: 12px;
+            fill: #1DB954;
+        }
+            .bio-terminal {
+                padding: 25px 20px;
+                margin: 10px;
+            }
+            
+            .name {
+                font-size: 2.2rem;
+            }
+            
+            .avatar {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .music-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="now-playing">
+        <div class="now-playing-header">
+            <svg class="music-icon" viewBox="0 0 24 24">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+            NOW PLAYING
+        </div>
+        <div class="now-playing-content">
+            <div class="album-cover" id="albumCover">😸</div>
+            <div class="track-details">
+                <div class="track-info">
+                    <div class="track-title">i dont think we'll ever find him</div>
+                    <div class="track-artist">wifiskeleton • suburban daredevil</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+                <a href="https://open.spotify.com/track/4QiWw5HNibKR1ikSU54p4q?si=5a2500ab8a8442bf" target="_blank" class="spotify-link">
+                    <svg class="spotify-logo" viewBox="0 0 24 24">
+                        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z"/>
+                    </svg>
+                    Listen on Spotify
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="matrix-bg" id="matrix"></div>
+    
+    <div class="container">
+        <div class="bio-terminal">
+            <div class="terminal-header">
+                <div class="terminal-title">kaze.exe</div>
+                <div class="terminal-status">ONLINE<span class="cursor"></span></div>
+            </div>
+            
+            <div class="avatar-section">
+                <div class="avatar-fallback" id="avatarContainer">🐺</div>
+                <div class="name glitch-text" data-text="KAZE">KAZE</div>
+                <div class="pronouns">he/him</div>
+            </div>
+            
+            <div class="info-block">
+                <div class="info-title">🎵 AUDIO_FEED</div>
+                <div class="music-grid">
+                    <div class="music-tag">WIFISKELETON</div>
+                    <div class="music-tag">2HOLLIS</div>
+                    <div class="music-tag">BLADEE</div>
+                </div>
+            </div>
+            
+            <div class="info-block">
+                <div class="info-title">
+                    <svg class="discord-logo" viewBox="0 0 24 24">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                    </svg>
+                    CONNECTION
+                </div>
+                <div class="discord-block">DISCORD: supkaze</div>
+            </div>
+            
+            <div class="info-block">
+                <div class="info-title">🐾 IDENTITY</div>
+                <div class="furry-badge">KOALA</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix rain effect
+        function createMatrix() {
+            const matrix = document.getElementById('matrix');
+            const chars = '01░▒▓█▀▄';
+            
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                span.textContent = chars[Math.floor(Math.random() * chars.length)];
+                span.style.position = 'absolute';
+                span.style.left = Math.random() * 100 + '%';
+                span.style.top = Math.random() * 100 + '%';
+                span.style.animation = `float ${3 + Math.random() * 4}s infinite linear`;
+                matrix.appendChild(span);
+            }
+        }
+
+        // Add floating animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0% { transform: translateY(-10px); opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { transform: translateY(calc(100vh + 10px)); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Create album cover with yellow cat
+        function createAlbumCover() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 120;
+            canvas.height = 120;
+            const ctx = canvas.getContext('2d');
+            
+            // Orange/brown gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 120, 120);
+            gradient.addColorStop(0, '#ff6b35');
+            gradient.addColorStop(1, '#8b4513');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 120, 120);
+            
+            // Black section (top left)
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, 60, 60);
+            
+            // Yellow cat body
+            ctx.fillStyle = '#ffeb3b';
+            ctx.beginPath();
+            ctx.arc(30, 40, 20, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Cat ears
+            ctx.beginPath();
+            ctx.moveTo(15, 25);
+            ctx.lineTo(20, 15);
+            ctx.lineTo(25, 25);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(35, 25);
+            ctx.lineTo(40, 15);
+            ctx.lineTo(45, 25);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Pink ear insides
+            ctx.fillStyle = '#ff69b4';
+            ctx.beginPath();
+            ctx.arc(20, 20, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(40, 20, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Cat eyes (white)
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(25, 35, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(35, 35, 5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Cat pupils
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(25, 35, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(35, 35, 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Cat mouth
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(30, 42, 3, 0, Math.PI);
+            ctx.stroke();
+            
+            // Yellow lightning bolt
+            ctx.fillStyle = '#ffeb3b';
+            ctx.beginPath();
+            ctx.moveTo(45, 15);
+            ctx.lineTo(50, 25);
+            ctx.lineTo(47, 25);
+            ctx.lineTo(52, 40);
+            ctx.lineTo(47, 30);
+            ctx.lineTo(50, 30);
+            ctx.lineTo(45, 15);
+            ctx.closePath();
+            ctx.fill();
+            
+            return canvas.toDataURL();
+        }
+
+        // Set the album cover
+        document.getElementById('albumCover').src = createAlbumCover();
+
+        // Load profile picture with fallback
+        function loadAvatar() {
+            const avatarContainer = document.getElementById('avatarContainer');
+            const img = new Image();
+            
+            img.onload = function() {
+                avatarContainer.innerHTML = '';
+                avatarContainer.appendChild(img);
+                img.className = 'avatar';
+                img.alt = 'kaze';
+            };
+            
+            img.onerror = function() {
+                // Keep fallback emoji if image fails to load
+                console.log('Avatar failed to load, using fallback');
+            };
+            
+            img.src = 'https://i.imgur.com/uNvmIOA.png';
+        }
+
+        // Load album cover with fallback
+        function loadAlbumCover() {
+            const albumContainer = document.getElementById('albumCover');
+            const img = new Image();
+            
+            img.onload = function() {
+                albumContainer.innerHTML = '';
+                albumContainer.appendChild(img);
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '4px';
+            };
+            
+            img.onerror = function() {
+                // Keep fallback cat emoji if image fails to load
+                console.log('Album cover failed to load, using fallback');
+                albumContainer.style.background = 'linear-gradient(135deg, #ff6b35, #8b4513)';
+                albumContainer.innerHTML = '😸';
+            };
+            
+            img.src = 'https://i.imgur.com/r3ISArK.png';
+        }
+
+        loadAlbumCover();
+        loadAvatar();
+
+        createMatrix();
+
+        // Interactive elements
+        document.querySelectorAll('.music-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.style.animation = 'none';
+                tag.offsetHeight; // Trigger reflow
+                tag.style.animation = 'glitch 0.5s';
+            });
+        });
+
+        // Terminal typing effect
+        const terminalTitle = document.querySelector('.terminal-title');
+        let originalText = terminalTitle.textContent;
+        
+        setInterval(() => {
+            if (Math.random() < 0.1) {
+                terminalTitle.textContent = originalText.split('').map(char => 
+                    Math.random() < 0.3 ? String.fromCharCode(33 + Math.random() * 94) : char
+                ).join('');
+                
+                setTimeout(() => {
+                    terminalTitle.textContent = originalText;
+                }, 100);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
